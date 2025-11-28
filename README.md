@@ -5,12 +5,12 @@ The portfolio showcases professional skills, projects, experience, education, an
 
 ---
 
-## 🚀 Live Website
-👉 <a href="https://pawankshtri.live" target="_blank">https://pawankshtri.live</a>
+## Live Website
+ <a href="https://pawankshtri.live" target="_blank">https://pawankshtri.live</a>
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -23,7 +23,7 @@ The portfolio showcases professional skills, projects, experience, education, an
 
 ---
 
-## 📌 Features
+## Features
 
 - Fully responsive UI  
 - Dynamic content management  
@@ -35,7 +35,7 @@ The portfolio showcases professional skills, projects, experience, education, an
 
 ---
 
-## 📂 Installation & Setup (Development)
+## Installation & Setup (Development)
 
 ```bash
 git clone <repository-url>
