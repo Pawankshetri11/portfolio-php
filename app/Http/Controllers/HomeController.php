@@ -24,7 +24,7 @@ class HomeController extends Controller
         $about = About::first();
         $keyMetrics = KeyMetric::orderBy('order')->get();
         $educations = Education::all();
-        $projects = Project::whereNotNull('published_at')->orderBy('published_at', 'desc')->get();
+        $projects = Project::whereNotNull('published_at')->orderBy('published_at', 'desc')->take(6)->get();
         $skills = Skill::all();
         $techStacks = TechStack::all();
         $experiences = Experience::orderBy('created_at', 'desc')->get();

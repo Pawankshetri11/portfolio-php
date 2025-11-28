@@ -957,23 +957,9 @@
                 currentEditType = null;
             }
 
-            // Load categories for the dropdown
-            const selectedCategoryId = isEdit ? (currentEditType === 'project' ? currentEditId : null) : null;
-            // For edit, we need to get the category_id from the project data, but since we set it earlier, perhaps pass it differently
-            // Actually, since we set the value before, but options load async, better to pass the category_id
-            // Wait, in editProject, we have project.category_id
-            // So let's modify to pass the selectedId to openProjectModal
-
-            // For now, let's load and then set the value after a delay, or modify the function
-            loadProjectCategoriesForDropdown();
-            // For edit mode, set the category after a short delay to allow options to load
-            if (isEdit && currentEditType === 'project') {
-                setTimeout(() => {
-                    // The category should be set from the project data, but since we cleared it, we need to refetch or store it
-                    // Actually, in editProject, we set document.getElementById('projectCategory').value = project.category_id || '';
-                    // But since options are loaded async, it may not work
-                    // Better to modify editProject to call loadProjectCategoriesForDropdown with selectedId
-                }, 100);
+            // Load categories for the dropdown (only for add mode, edit mode loads separately)
+            if (!isEdit) {
+                loadProjectCategoriesForDropdown();
             }
 
             // Attach save button event listener
@@ -981,7 +967,7 @@
             if (saveButton) {
                 // Remove any existing listeners
                 saveButton.onclick = null;
-                saveButton.addEventListener('click', function(e) {
+                saveButton.onclick = function(e) {
                     e.preventDefault();
                     console.log('Save button clicked');
                     // Disable button to prevent double clicks
@@ -1003,7 +989,7 @@
                         currentEditId = null;
                         currentEditType = null;
                     });
-                });
+                };
             }
         }
 
@@ -1051,6 +1037,7 @@
         // Global variables for edit mode
         let currentEditId = null;
         let currentEditType = null;
+        let isDeleting = false;
 
         // CRUD Operations for Admin Panel
         async function saveHeroData() {
@@ -1242,6 +1229,7 @@
                     method: method,
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
                     },
                     body: formData
@@ -1254,15 +1242,21 @@
                     showNotification(`Project ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
                     closeProjectModal();
                     location.reload(); // Refresh to show new data
+                } else if (response.status === 422) {
+                    const errorData = await response.json();
+                    console.log('Validation error:', errorData);
+                    if (errorData.errors) {
+                        const messages = Object.values(errorData.errors).flat().join('\n');
+                        showNotification(messages, 'error');
+                    } else if (errorData.error) {
+                        showNotification(errorData.error, 'error');
+                    } else {
+                        showNotification(`Failed to ${isEdit ? 'update' : 'add'} project`, 'error');
+                    }
                 } else {
                     const errorText = await response.text();
                     console.log('Error response:', errorText);
-                    try {
-                        const errorData = JSON.parse(errorText);
-                        showNotification(errorData.message || `Failed to ${isEdit ? 'update' : 'add'} project`, 'error');
-                    } catch (e) {
-                        showNotification(`Failed to ${isEdit ? 'update' : 'add'} project`, 'error');
-                    }
+                    showNotification(`Failed to ${isEdit ? 'update' : 'add'} project`, 'error');
                 }
             } catch (error) {
                 showNotification(`Error ${isEdit ? 'updating' : 'adding'} project`, 'error');
@@ -1408,13 +1402,12 @@
         }
 
         async function deleteItem(type, id) {
-            if (!confirm('Are you sure you want to delete this item?')) return;
-
             try {
                 const response = await fetch(`/admin/${type}/${id}`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
                     }
                 });
@@ -2053,9 +2046,18 @@
                         }
             
                         if (deleteButton) {
+                            e.stopPropagation();
+                            if (isDeleting) return;
+                            isDeleting = true;
                             const type = deleteButton.getAttribute('data-delete-type');
                             const id = deleteButton.getAttribute('data-id');
-                            deleteItem(type, id);
+                            if (confirm('Are you sure you want to delete this item?')) {
+                                deleteItem(type, id).finally(() => {
+                                    isDeleting = false;
+                                });
+                            } else {
+                                isDeleting = false;
+                            }
                         }
             
                         if (editProjectCategoryButton) {

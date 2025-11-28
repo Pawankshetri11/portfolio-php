@@ -7,6 +7,16 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+            @endif
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div class="mb-4">
@@ -42,7 +52,7 @@
                                         <form action="{{ route('admin.projects.destroy', $project->id) }}" method="POST" class="inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button type-="submit" class="text-red-600 hover:text-red-900 ml-4">Delete</button>
+                                            <button type="submit" class="text-red-600 hover:text-red-900 ml-4">Delete</button>
                                         </form>
                                     </td>
                                 </tr>

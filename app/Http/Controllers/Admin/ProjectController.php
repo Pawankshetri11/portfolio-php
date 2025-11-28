@@ -48,9 +48,10 @@ class ProjectController extends Controller
 
         $data = $request->except(['image', 'slug']);
         $data['slug'] = Str::slug($request->title);
+        $data['published_at'] = $data['published_at'] ?? now();
 
         if (Project::where('slug', $data['slug'])->exists()) {
-            return back()->withErrors(['slug' => 'A project with this title already exists.'])->withInput();
+            return response()->json(['error' => 'A project with this title already exists.'], 422);
         }
 
         if ($request->hasFile('image')) {
@@ -60,11 +61,7 @@ class ProjectController extends Controller
 
         Project::create($data);
 
-        if ($request->wantsJson()) {
-            return response()->json(['message' => 'Project created successfully.']);
-        }
-
-        return redirect()->route('admin.projects.index')->with('success', 'Project created successfully.');
+        return response()->json(['message' => 'Project created successfully.']);
     }
 
     /**
@@ -109,7 +106,7 @@ class ProjectController extends Controller
         $data['slug'] = Str::slug($request->title);
 
         if (Project::where('slug', $data['slug'])->where('id', '!=', $project->id)->exists()) {
-            return back()->withErrors(['slug' => 'A project with this title already exists.'])->withInput();
+            return response()->json(['error' => 'A project with this title already exists.'], 422);
         }
 
         if ($request->hasFile('image')) {
@@ -122,11 +119,7 @@ class ProjectController extends Controller
 
         $project->update($data);
 
-        if ($request->wantsJson()) {
-            return response()->json(['message' => 'Project updated successfully.']);
-        }
-
-        return redirect()->route('admin.projects.index')->with('success', 'Project updated successfully.');
+        return response()->json(['message' => 'Project updated successfully.']);
     }
 
     /**
@@ -135,12 +128,18 @@ class ProjectController extends Controller
     public function destroy(string $id)
     {
         $project = Project::findOrFail($id);
-        $project->delete();
 
-        if (request()->wantsJson()) {
-            return response()->json(['message' => 'Project deleted successfully.']);
+        // Delete associated image if exists
+        if ($project->image) {
+            try {
+                Storage::disk('public')->delete($project->image);
+            } catch (\Exception $e) {
+                // Continue with deletion even if image deletion fails
+            }
         }
 
-        return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully.');
+        $project->delete();
+
+        return response()->json(['message' => 'Project deleted successfully.']);
     }
 }

@@ -30,7 +30,7 @@
 
                 </div>
                 <p class="text-zinc-400 text-sm mb-6 flex-grow leading-relaxed">
-                    {{ $project->description ?? 'A comprehensive project showcasing technical expertise and problem-solving skills.' }}
+                    {{ $project->content ?? 'A comprehensive project showcasing technical expertise and problem-solving skills.' }}
                 </p>
                 @if($project->technologies)
                 <div class="flex flex-wrap gap-2 mb-6">

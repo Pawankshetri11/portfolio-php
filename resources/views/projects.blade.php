@@ -194,7 +194,7 @@
 
                     </div>
                     <p class="text-zinc-400 text-sm mb-6 flex-grow leading-relaxed">
-                        {{ $project->description }}
+                        {{ $project->content }}
                     </p>
                     <div class="flex flex-wrap gap-2 mb-6">
                         @foreach(explode(',', $project->technologies) as $tech)
