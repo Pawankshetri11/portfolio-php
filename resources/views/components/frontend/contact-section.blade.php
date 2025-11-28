@@ -1,19 +1,19 @@
 <!-- 8. CONTACT SECTION -->
-<section id="contact" class="relative z-10 py-16 md:py-24 px-6">
+<section id="contact" class="relative z-10 py-12 md:py-24 px-6">
     <div class="max-w-6xl mx-auto">
         <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
-            <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-4">{{ $contact->heading_text ?? 'Get In Touch' }}</h2>
+            <h2 class="text-2xl md:text-5xl font-display font-bold text-white mb-4">{{ $contact->heading_text ?? 'Get In Touch' }}</h2>
             <p class="text-zinc-400 text-lg mb-8">
                 {{ $contact->subtext ?? 'Let\'s connect! Whether it\'s about a project, opportunity, or just to say hi.' }}
             </p>
         </div>
 
-        <div class="glass-panel rounded-xl p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div class="glass-panel rounded-xl p-6 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12">
             
             <!-- Left: Channels -->
             <div class="space-y-8">
                 <h3 class="text-2xl font-display font-bold text-white">Let's talk!</h3>
-                <p class="text-zinc-400">
+                <p class="text-zinc-400 text-sm md:text-base">
                     I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
                 </p>
 

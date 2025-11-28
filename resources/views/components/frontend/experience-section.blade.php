@@ -1,15 +1,15 @@
 <!-- 5. EXPERIENCE SECTION (Single-Company Multi-Role Layout) -->
 @props(['experiences' => collect([])])
 
-<section id="experience" class="relative z-10 w-full px-6 py-24">
+<section id="experience" class="relative z-10 w-full px-6 py-16 md:py-24">
     <div class="max-w-[95%] mx-auto">
         <div class="text-center mb-12 md:mb-16" data-aos="fade-up">
-            <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-4 md:mb-6">Professional <span class="text-gold-gradient">Experience</span></h2>
+            <h2 class="text-2xl md:text-5xl font-display font-bold text-white mb-4 md:mb-6">Professional <span class="text-gold-gradient">Experience</span></h2>
             <div class="w-24 h-1 bg-[#ffd700] mx-auto rounded-full"></div>
         </div>
 
         <!-- Experience Grid - Updated to 3 columns on large screens -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
 
             @forelse($experiences->sortByDesc('created_at') as $index => $experience)
             @php
@@ -31,7 +31,7 @@
 
             @if(count($all_roles) > 1)
             <!-- MULTI-ROLE CARD -->
-            <div class="glass-panel p-8 transform transition-all duration-300 hover:border-[#ffd700]" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+            <div class="glass-panel p-6 md:p-8 transform transition-all duration-300 hover:border-[#ffd700]" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                 <!-- Company Header -->
                 <div class="flex gap-5 items-center mb-8 pb-6 border-b border-white/10">
                     <div class="flex-shrink-0 w-16 h-16 bg-zinc-800 rounded-xl flex items-center justify-center border border-zinc-700 text-2xl font-bold text-[#ffd700]">
@@ -97,7 +97,7 @@
             @elseif(count($all_roles) === 1)
             @php $role = $all_roles[0]; @endphp
             <!-- SINGLE ROLE CARD -->
-            <div class="glass-panel p-8 transform transition-all duration-300 hover:border-[#ffd700]" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
+            <div class="glass-panel p-6 md:p-8 transform transition-all duration-300 hover:border-[#ffd700]" data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
                 <div class="flex gap-5 items-start mb-6">
                     <div class="flex-shrink-0 w-14 h-14 bg-zinc-800 rounded-xl flex items-center justify-center border border-zinc-700 text-2xl font-bold text-[#ffd700]">
                         {{ substr($experience->company, 0, 2) }}
@@ -105,7 +105,7 @@
                     <div>
                         <h3 class="text-xl font-display font-bold text-white">{{ $role['title'] }}</h3>
                         <p class="text-[#ffd700] font-medium text-sm">{{ $experience->company }}</p>
-                        <div class="flex items-center gap-3 text-xs text-zinc-500 mt-1 font-mono">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-zinc-500 mt-1 font-mono">
                             <span><i data-lucide="calendar" class="inline w-3 h-3 mr-1"></i>{{ \Carbon\Carbon::parse($role['start_date'])->format('M Y') }} - {{ isset($role['end_date']) && $role['end_date'] ? \Carbon\Carbon::parse($role['end_date'])->format('M Y') : 'Present' }}</span>
                             <span><i data-lucide="map-pin" class="inline w-3 h-3 mr-1"></i>{{ $experience->location ?? 'Remote' }}</span>
                         </div>
@@ -148,7 +148,7 @@
             @endif
             @empty
             <!-- Job 1: Capital Street FX (Standard Card) -->
-            <div class="glass-panel p-8 transform transition-all duration-300 hover:border-[#ffd700]" data-aos="fade-up">
+            <div class="glass-panel p-6 md:p-8 transform transition-all duration-300 hover:border-[#ffd700]" data-aos="fade-up">
                 <div class="flex gap-5 items-start mb-6">
                     <div class="flex-shrink-0 w-14 h-14 bg-zinc-800 rounded-xl flex items-center justify-center border border-zinc-700 text-2xl font-bold text-[#ffd700]">
                         CS

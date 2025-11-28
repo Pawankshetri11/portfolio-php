@@ -19,12 +19,12 @@
 
         <!-- Desktop Navigation -->
         <nav class="hidden lg:flex items-center space-x-6 md:space-x-8 animate-fade-in-down" style="animation-delay: 100ms;">
-            <a href="/#hero" class="nav-link">Home</a>
-            <a href="/#experience" class="nav-link">Experience</a>
-            <a href="/#education" class="nav-link">Education</a>
-            <a href="/#certifications" class="nav-link">Certifications</a>
-            <a href="/projects" class="nav-link">Projects</a>
-            <a href="/#contact" class="nav-link">Contact</a>
+            <a href="{{ url('/#hero') }}" class="nav-link">Home</a>
+            <a href="{{ url('/#experience') }}" class="nav-link">Experience</a>
+            <a href="{{ url('/#education') }}" class="nav-link">Education</a>
+            <a href="{{ url('/#certifications') }}" class="nav-link">Certifications</a>
+            <a href="{{ url('/projects') }}" class="nav-link">Projects</a>
+            <a href="{{ url('/#contact') }}" class="nav-link">Contact</a>
             @auth
                 <a href="{{ route('admin.index') }}" class="nav-link flex items-center gap-2">
                     <i data-lucide="shield" class="w-4 h-4"></i>
@@ -59,12 +59,12 @@
 
             <!-- Mobile Links -->
             <div class="space-y-2 mb-8">
-                <a href="/#hero" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Home</a>
-                <a href="/#experience" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Experience</a>
-                <a href="/#education" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Education</a>
-                <a href="/#certifications" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Certifications</a>
-                <a href="/projects" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Projects</a>
-                <a href="/#contact" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Contact</a>
+                <a href="{{ url('/#hero') }}" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Home</a>
+                <a href="{{ url('/#experience') }}" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Experience</a>
+                <a href="{{ url('/#education') }}" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Education</a>
+                <a href="{{ url('/#certifications') }}" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Certifications</a>
+                <a href="{{ url('/projects') }}" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Projects</a>
+                <a href="{{ url('/#contact') }}" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5">Contact</a>
                 @auth
                     <a href="{{ route('admin.index') }}" class="block py-3 text-lg text-zinc-300 hover:text-white border-b border-white/5 flex items-center gap-2">
                         <i data-lucide="shield" class="w-4 h-4"></i>

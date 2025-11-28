@@ -1,8 +1,8 @@
 <!-- 7. PORTFOLIO GRID -->
-<section id="projects" class="relative z-10 w-full px-6 py-16 md:py-40">
+<section id="projects" class="relative z-10 w-full px-6 py-12 md:py-40">
     <div class="max-w-[95%] mx-auto">
         <div class="text-center mb-8 md:mb-16" data-aos="fade-up">
-            <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-4 md:mb-6">Featured <span class="text-gold-gradient">Projects</span></h2>
+            <h2 class="text-2xl md:text-5xl font-display font-bold text-white mb-4 md:mb-6">Featured <span class="text-gold-gradient">Projects</span></h2>
             <p class="text-zinc-400 max-w-2xl mx-auto">A showcase of my technical capabilities and problem-solving approach</p>
         </div>
 
@@ -15,13 +15,13 @@
 
         <!-- Mobile Carousel / Desktop Grid -->
         <!-- Changed min-w-[85vw] to min-w-full for full visibility on mobile -->
-        <div id="projects-grid" class="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory scrollbar-hide scroll-smooth pb-4 md:pb-0">
+        <div id="projects-grid" class="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory scrollbar-hide scroll-smooth pb-4 md:pb-0">
 
             @forelse($projects as $index => $project)
             <!-- Project Card -->
-            <div data-aos="fade-up" data-category="{{ $project->category_slug }}" class="project-card glass-panel p-6 md:p-8 cursor-pointer group flex flex-col h-full min-w-full md:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
+            <div data-aos="fade-up" data-category="{{ $project->category_slug }}" class="project-card glass-panel p-4 md:p-8 cursor-pointer group flex flex-col h-full min-w-full md:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
                 <div class="flex justify-between items-start mb-4">
-                    <h4 class="text-xl font-bold text-white">{{ $project->title }}</h4>
+                    <h4 class="text-lg md:text-xl font-bold text-white">{{ $project->title }}</h4>
                     @if($project->category)
                         <span class="px-3 py-1 text-xs font-bold rounded-full" style="background-color: {{ $project->category->color }}20; color: {{ $project->category->color }}">{{ $project->category->name }}</span>
                     @else
@@ -54,12 +54,12 @@
             </div>
             @empty
             <!-- Default Project Card -->
-            <div data-aos="fade-up" data-category="web" class="project-card glass-panel p-6 md:p-8 cursor-pointer group flex flex-col h-full min-w-full md:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
+            <div data-aos="fade-up" data-category="web" class="project-card glass-panel p-4 md:p-8 cursor-pointer group flex flex-col h-full min-w-full md:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
                 <div class="flex justify-between items-start mb-4">
                     <h4 class="text-xl font-bold text-white">Sample Project</h4>
                     <span class="px-3 py-1 text-xs font-bold text-indigo-900 bg-indigo-200 rounded-full">Web</span>
                 </div>
-                <p class="text-zinc-400 text-sm mb-6 flex-grow leading-relaxed">
+                <p class="text-zinc-400 text-xs md:text-sm mb-6 flex-grow leading-relaxed">
                     A sample project showcasing technical capabilities and development skills.
                 </p>
                 <div class="flex flex-wrap gap-2 mb-6">

@@ -1,10 +1,10 @@
 <!-- 6.5 CERTIFICATIONS SECTION (Horizontal Scroll on Mobile / Grid on Desktop) -->
 @props(['certificates' => collect([])])
 
-<section id="certifications" class="relative z-10 py-24 md:py-40 px-6">
+<section id="certifications" class="relative z-10 py-16 md:py-40 px-6">
     <div class="w-full">
         <div class="text-center mb-12" data-aos="fade-up">
-            <h2 class="text-3xl md:text-5xl font-display font-bold text-white mb-4">Key <span class="text-gold-gradient">Certifications</span></h2>
+            <h2 class="text-2xl md:text-5xl font-display font-bold text-white mb-4">Key <span class="text-gold-gradient">Certifications</span></h2>
             <p class="text-zinc-400 max-w-2xl mx-auto">Validated expertise across cloud computing, data science, and full-stack development.</p>
         </div>
 
@@ -13,7 +13,7 @@
 
             @foreach($certificates as $index => $certificate)
             <!-- Cert Card -->
-            <div class="glass-panel p-6 min-w-full sm:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,215,0,0.15)] hover:border-[#ffd700] group flex flex-col justify-between" data-aos="fade-up" data-aos-delay="{{ $index * 50 }}">
+            <div class="glass-panel p-4 md:p-6 min-w-full sm:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_25px_rgba(255,215,0,0.15)] hover:border-[#ffd700] group flex flex-col justify-between" data-aos="fade-up" data-aos-delay="{{ $index * 50 }}">
                 <div>
                     <div class="flex justify-between items-start mb-4">
                         <div class="p-2 bg-zinc-800 rounded-lg group-hover:bg-[#ffd700] transition-colors">
@@ -25,8 +25,8 @@
                             <span class="text-[10px] text-zinc-300 font-mono">{{ $certificate->issue_date->format('d/m/Y') }}</span>
                         </div>
                     </div>
-                    <h3 class="text-lg font-bold text-white mb-1 group-hover:text-[#ffd700] transition-colors">{{ $certificate->name }}</h3>
-                    <p class="text-xs text-zinc-400">{{ $certificate->issuing_organization }}</p>
+                    <h3 class="text-base md:text-lg font-bold text-white mb-1 group-hover:text-[#ffd700] transition-colors">{{ $certificate->name }}</h3>
+                    <p class="text-[10px] md:text-xs text-zinc-400">{{ $certificate->issuing_organization }}</p>
                 </div>
                 <!-- View Certificate Link -->
                 <div class="mt-4 pt-4 border-t border-white/5">

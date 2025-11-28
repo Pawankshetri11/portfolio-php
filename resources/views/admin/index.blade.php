@@ -334,7 +334,7 @@
                         </div>
                         @endforeach
                         <!-- Add New -->
-                        <button onclick="openSkillCategoryModal()" class="w-full border border-dashed border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500 py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all">
+                        <button id="add-category-btn" onclick="addCategory()" class="w-full border border-dashed border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500 py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all">
                             <i data-lucide="plus" class="w-4 h-4"></i> Add New Category
                         </button>
                     </div>
@@ -464,10 +464,12 @@
 
             // Show/hide main save button based on section
             const saveButton = document.getElementById('saveChanges');
-            if (sectionId === 'hero') {
-                saveButton.classList.remove('hidden');
-            } else {
-                saveButton.classList.add('hidden');
+            if (saveButton) { // Defensive check
+                if (sectionId === 'hero') {
+                    saveButton.style.display = 'inline-block';
+                } else {
+                    saveButton.style.display = 'none';
+                }
             }
 
             // Add section-specific save buttons
@@ -499,6 +501,13 @@
             if (event.state && event.state.section) {
                 showSection(event.state.section, false);
             }
+        });
+
+        // On initial load, check hash and show corresponding section
+        document.addEventListener('DOMContentLoaded', function() {
+            const hash = window.location.hash.substring(1);
+            const sectionId = hash || 'hero';
+            showSection(sectionId, false);
         });
 
 
@@ -1271,7 +1280,7 @@
                 const categoriesList = document.getElementById('project-categories-list');
 
                 // Clear existing categories except the add button
-                const addButton = categoriesList.querySelector('button');
+                const addButton = categoriesList.querySelector('button[onclick*="openSkillCategoryModal"]');
                 categoriesList.innerHTML = '';
 
                 categories.forEach(category => {
@@ -1776,6 +1785,12 @@
         const skillCategoryModalTitle = document.getElementById('skillCategoryModalTitle');
         const skillCategoryForm = document.getElementById('skillCategoryForm');
         const skillCategoryNameInput = document.getElementById('skillCategoryNameInput');
+
+        function addCategory() {
+            // Reset state for "add" mode
+            window.currentEditCategoryId = null;
+            openSkillCategoryModal();
+        }
 
         function openSkillCategoryModal(isEdit = false) {
             skillCategoryModal.classList.remove('hidden');
