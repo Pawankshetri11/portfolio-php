@@ -6,7 +6,7 @@ The portfolio showcases professional skills, projects, experience, education, an
 ---
 
 ## Live Website
- <a href="https://pawankshtri.live" target="_blank">https://pawankshtri.live</a>
+ <a href="https://pawankshetri.live" target="_blank">https://pawankshetri.live</a>
 
 ---
 
