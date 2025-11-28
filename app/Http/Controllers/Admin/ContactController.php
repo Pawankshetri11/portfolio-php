@@ -22,7 +22,7 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Contact $contact)
+    public function update(Request $request)
     {
         $request->validate([
             'contact_email' => 'nullable|email',
@@ -33,6 +33,7 @@ class ContactController extends Controller
             'github_url' => 'nullable|url',
         ]);
 
+        $contact = Contact::firstOrCreate([]);
         $contact->update($request->all());
 
         return back()->with('success', 'Contact information updated successfully.');

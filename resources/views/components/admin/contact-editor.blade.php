@@ -5,9 +5,8 @@
         @php
             $contact = \App\Models\Contact::first();
         @endphp
-        <form action="{{ route('admin.contacts.update', $contact?->id ?? 1) }}" method="POST" class="space-y-6">
+        <form action="{{ route('admin.contacts.update') }}" method="POST" class="space-y-6">
             @csrf
-            @method('PATCH')
             <div class="grid grid-cols-1 gap-6">
                 <div>
                     <label class="admin-label">Contact Email (Form Destination)</label>

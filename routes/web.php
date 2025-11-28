@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('admin/skill-categories', SkillCategoryController::class);
     Route::resource('admin/tech-stacks', TechStackController::class);
     Route::resource('admin/experiences', ExperienceController::class);
-    Route::patch('/admin/contacts/{contact}', [AdminContactController::class, 'update'])->name('admin.contacts.update');
+    Route::post('/admin/contacts/update', [AdminContactController::class, 'update'])->name('admin.contacts.update');
     Route::resource('admin/certificates', CertificateController::class);
     Route::resource('admin/messages', App\Http\Controllers\Admin\ContactMessageController::class);
 });
