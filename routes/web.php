@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ExperienceController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\CertificateController;
 use App\Http\Controllers\Admin\SkillCategoryController;
+use App\Http\Controllers\Admin\ProjectCategoryController;
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('admin/projects', ProjectController::class);
     Route::resource('admin/skills', SkillController::class);
     Route::resource('admin/skill-categories', SkillCategoryController::class);
+    Route::resource('admin/project-categories', ProjectCategoryController::class);
     Route::resource('admin/tech-stacks', TechStackController::class);
     Route::resource('admin/experiences', ExperienceController::class);
     Route::post('/admin/contacts/update', [AdminContactController::class, 'update'])->name('admin.contacts.update');

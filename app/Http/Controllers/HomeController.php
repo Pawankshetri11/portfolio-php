@@ -47,7 +47,7 @@ class HomeController extends Controller
 
     public function projects(Request $request)
     {
-        $projects = Project::whereNotNull('published_at')->orderBy('published_at', 'desc')->paginate(12);
+        $projects = Project::with('category')->whereNotNull('published_at')->orderBy('published_at', 'desc')->paginate(12);
         if ($request->ajax()) {
             return response()->json($projects);
         }

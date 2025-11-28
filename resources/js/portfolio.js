@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Contact form handling (basic)
-    const contactForm = document.querySelector('form');
+    const contactForm = document.querySelector('#contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -236,22 +236,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Add loading animation to buttons
-    const buttons = document.querySelectorAll('button[type="submit"], .bg-gradient-to-r');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            if (this.type === 'submit') {
-                this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
-                this.disabled = true;
+    const contactFormForButton = document.querySelector('#contact-form');
+    if (contactFormForButton) {
+        const buttons = contactFormForButton.querySelectorAll('button[type="submit"], .bg-gradient-to-r');
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (this.type === 'submit') {
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sending...';
+                    this.disabled = true;
 
-                // Reset after 3 seconds (simulate form submission)
-                setTimeout(() => {
-                    this.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Message';
-                    this.disabled = false;
-                }, 3000);
-            }
+                    // Reset after 3 seconds (simulate form submission)
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>Send Message';
+                        this.disabled = false;
+                    }, 3000);
+                }
+            });
         });
-    });
+    }
 
     // Initialize AOS-like animations
     const initAnimations = () => {

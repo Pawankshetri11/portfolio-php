@@ -173,21 +173,25 @@
         <div class="max-w-[95%] mx-auto">
             <!-- Category Filters -->
             <div class="flex flex-wrap justify-center gap-4 mb-12" data-aos="fade-up" data-aos-delay="100">
-                <button onclick="filterProjects('all')" class="filter-btn active px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">All</button>
-                <button onclick="filterProjects('ai')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">AI/ML</button>
-                <button onclick="filterProjects('data')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">Data Analysis</button>
-                <button onclick="filterProjects('game')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">Game Development</button>
-                <button onclick="filterProjects('web')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">Web Development</button>
+                <button onclick="filterProjects('all')" data-slug="all" class="filter-btn active px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">All</button>
+                @foreach(\App\Models\ProjectCategory::orderBy('name')->get() as $category)
+                <button onclick="filterProjects('{{ $category->slug }}')" data-slug="{{ $category->slug }}" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">{{ $category->name }}</button>
+                @endforeach
             </div>
 
             <!-- Grid Layout -->
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" data-page="1" data-next-page-url="{{ $projects->nextPageUrl() }}">
                 @forelse($projects as $index => $project)
                 <!-- Project Card -->
-                <div data-aos="fade-up" data-category="{{ strtolower($project->category ?? 'web') }}" class="glass-panel p-8 cursor-pointer group flex flex-col h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
+                <div data-aos="fade-up" data-category="{{ $project->category_slug }}" class="glass-panel p-8 cursor-pointer group flex flex-col h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
                     <div class="flex justify-between items-start mb-4">
                         <h4 class="text-xl font-bold text-white">{{ $project->title }}</h4>
-                        <span class="px-3 py-1 text-xs font-bold text-purple-900 bg-purple-200 rounded-full">{{ $project->category_label ?? 'Web Development' }}</span>
+                        @if($project->category)
+                            <span class="px-3 py-1 text-xs font-bold rounded-full" style="background-color: {{ $project->category->color }}20; color: {{ $project->category->color }}">{{ $project->category->name }}</span>
+                        @else
+                            <span class="px-3 py-1 text-xs font-bold text-gray-900 bg-gray-200 rounded-full">Uncategorized</span>
+                        @endif
+
                     </div>
                     <p class="text-zinc-400 text-sm mb-6 flex-grow leading-relaxed">
                         {{ $project->description }}
@@ -230,8 +234,8 @@
 
             buttons.forEach(btn => {
                 btn.classList.remove('active');
-                if(btn.textContent.toLowerCase().includes(category === 'ai' ? 'ai' : category === 'data' ? 'data' : category === 'game' ? 'game' : category === 'web' ? 'web' : 'all')) {
-                   btn.classList.add('active');
+                if (btn.getAttribute('data-slug') === category) {
+                    btn.classList.add('active');
                 }
             });
 
@@ -377,11 +381,11 @@
         function createProjectCard(project) {
             const div = document.createElement('div');
             div.className = 'glass-panel p-8 cursor-pointer group flex flex-col h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]';
-            div.setAttribute('data-category', project.category || 'web');
+            div.setAttribute('data-category', project.category ? project.category.slug : 'uncategorized');
             div.innerHTML = `
                 <div class="flex justify-between items-start mb-4">
                     <h4 class="text-xl font-bold text-white">${project.title}</h4>
-                    <span class="px-3 py-1 text-xs font-bold text-purple-900 bg-purple-200 rounded-full">${project.category_label || 'Web Development'}</span>
+                    ${project.category ? `<span class="px-3 py-1 text-xs font-bold rounded-full" style="background-color: ${project.category.color}20; color: ${project.category.color}">${project.category.name}</span>` : ''}
                 </div>
                 <p class="text-zinc-400 text-sm mb-6 flex-grow leading-relaxed">
                     ${project.description}

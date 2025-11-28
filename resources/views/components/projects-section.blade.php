@@ -7,11 +7,10 @@
         </div>
 
         <div class="flex flex-wrap justify-center gap-4 mb-8 md:mb-12" data-aos="fade-up" data-aos-delay="100">
-            <button onclick="filterProjects('all')" class="filter-btn active px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">All</button>
-            <button onclick="filterProjects('ai')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">AI/ML</button>
-            <button onclick="filterProjects('data')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">Data Analysis</button>
-            <button onclick="filterProjects('game')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">Game Development</button>
-            <button onclick="filterProjects('web')" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">Web Development</button>
+            <button onclick="filterProjects('all')" data-slug="all" class="filter-btn active px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">All</button>
+            @foreach(\App\Models\ProjectCategory::orderBy('name')->get() as $category)
+            <button onclick="filterProjects('{{ $category->slug }}')" data-slug="{{ $category->slug }}" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">{{ $category->name }}</button>
+            @endforeach
         </div>
 
         <!-- Mobile Carousel / Desktop Grid -->
@@ -20,20 +19,15 @@
 
             @forelse($projects as $index => $project)
             <!-- Project Card -->
-            <div data-aos="fade-up" data-category="{{ $project->category }}" class="project-card glass-panel p-6 md:p-8 cursor-pointer group flex flex-col h-full min-w-full md:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
+            <div data-aos="fade-up" data-category="{{ $project->category_slug }}" class="project-card glass-panel p-6 md:p-8 cursor-pointer group flex flex-col h-full min-w-full md:min-w-0 snap-center transform transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(255,215,0,0.2)] hover:border-[#ffd700]">
                 <div class="flex justify-between items-start mb-4">
                     <h4 class="text-xl font-bold text-white">{{ $project->title }}</h4>
-                    @if($project->category === 'ai')
-                        <span class="px-3 py-1 text-xs font-bold text-purple-900 bg-purple-200 rounded-full">AI/ML</span>
-                    @elseif($project->category === 'web')
-                        <span class="px-3 py-1 text-xs font-bold text-indigo-900 bg-indigo-200 rounded-full">Web</span>
-                    @elseif($project->category === 'data')
-                        <span class="px-3 py-1 text-xs font-bold text-pink-900 bg-pink-200 rounded-full">Data</span>
-                    @elseif($project->category === 'game')
-                        <span class="px-3 py-1 text-xs font-bold text-green-900 bg-green-200 rounded-full">Game</span>
+                    @if($project->category)
+                        <span class="px-3 py-1 text-xs font-bold rounded-full" style="background-color: {{ $project->category->color }}20; color: {{ $project->category->color }}">{{ $project->category->name }}</span>
                     @else
-                        <span class="px-3 py-1 text-xs font-bold text-gray-900 bg-gray-200 rounded-full">{{ ucfirst($project->category) }}</span>
+                        <span class="px-3 py-1 text-xs font-bold text-gray-900 bg-gray-200 rounded-full">Uncategorized</span>
                     @endif
+
                 </div>
                 <p class="text-zinc-400 text-sm mb-6 flex-grow leading-relaxed">
                     {{ $project->description ?? 'A comprehensive project showcasing technical expertise and problem-solving skills.' }}
@@ -90,7 +84,7 @@
 
         <!-- View All Button -->
         <div class="text-center mt-8 md:mt-12">
-            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 px-6 md:px-8 py-2 md:py-3 bg-[#ffd700] text-black font-bold rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,215,0,0.4)] text-sm md:text-base">
+            <a href="{{ route('frontend.projects.index') }}" class="inline-flex items-center gap-2 px-6 md:px-8 py-2 md:py-3 bg-[#ffd700] text-black font-bold rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(255,215,0,0.4)] text-sm md:text-base">
                 View All Projects <i data-lucide="arrow-right" class="w-4 h-4 md:w-5 md:h-5"></i>
             </a>
         </div>
@@ -107,8 +101,7 @@
 
         buttons.forEach(btn => {
             btn.classList.remove('active');
-            const btnCategory = btn.textContent.toLowerCase().split('/')[0].split(' ')[0].trim();
-            if (btnCategory === category) {
+            if (btn.getAttribute('data-slug') === category) {
                 btn.classList.add('active');
             }
         });

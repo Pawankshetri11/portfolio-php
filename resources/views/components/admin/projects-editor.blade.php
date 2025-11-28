@@ -21,12 +21,12 @@
             <div class="flex justify-between items-start mb-4">
                 <h4 class="text-white font-bold text-lg leading-tight">{{ $project->title }}</h4>
                 <span class="text-xs font-bold text-purple-900 bg-purple-200 px-3 py-1 rounded-full">
-                    {{ $project->category === 'ai' ? 'AI/ML' : ($project->category === 'web' ? 'Web' : ($project->category === 'data' ? 'Data' : 'Game')) }}
+                    {{ $project->category_label }}
                 </span>
             </div>
 
             <p class="text-zinc-400 text-sm mb-4 line-clamp-3">
-                {{ $project->description }}
+                {{ $project->content }}
             </p>
 
             <div class="flex flex-wrap gap-2 mb-6">

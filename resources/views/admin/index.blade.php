@@ -294,23 +294,21 @@
             <!-- 7. PROJECTS EDITOR (Hidden) -->
             @include('components.admin.projects-editor')
 
-            <!-- 8. CATEGORIES EDITOR (Hidden) -->
+            <!-- 8. PROJECT CATEGORIES EDITOR (Hidden) -->
             <div id="categories-section" class="space-y-8 max-w-4xl mx-auto hidden">
                 <div class="admin-card">
                     <h3 class="text-lg font-bold text-white mb-6 border-b border-white/5 pb-4">Manage Project Categories</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg">
-                            <input type="text" class="bg-transparent border-none text-white flex-1 focus:outline-none" value="AI/ML">
-                            <div class="w-6 h-6 rounded-full bg-purple-400 cursor-pointer" title="Tag Color"></div>
-                            <button class="text-red-400 hover:text-red-300"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    <div id="project-categories-list" class="space-y-3">
+                        @foreach(\App\Models\ProjectCategory::orderBy('name')->get() as $category)
+                        <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg project-category-item" data-id="{{ $category->id }}">
+                            <span class="flex-1 text-white">{{ $category->name }}</span>
+                            <div class="w-6 h-6 rounded-full" style="background-color: {{ $category->color ?: '#3B82F6' }}"></div>
+                            <button class="text-blue-400 hover:text-blue-300 edit-project-category" data-id="{{ $category->id }}" title="Edit Category"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                            <button class="text-red-400 hover:text-red-300 delete-project-category" data-id="{{ $category->id }}" title="Delete Category"><i data-lucide="x" class="w-4 h-4"></i></button>
                         </div>
-                        <div class="flex items-center gap-3 bg-white/5 p-3 rounded-lg">
-                            <input type="text" class="bg-transparent border-none text-white flex-1 focus:outline-none" value="Web Development">
-                            <div class="w-6 h-6 rounded-full bg-indigo-400 cursor-pointer" title="Tag Color"></div>
-                            <button class="text-red-400 hover:text-red-300"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        </div>
+                        @endforeach
                         <!-- Add New -->
-                        <button class="w-full border border-dashed border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500 py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all">
+                        <button onclick="openProjectCategoryModal()" class="w-full border border-dashed border-zinc-700 text-zinc-500 hover:text-white hover:border-zinc-500 py-3 rounded-lg text-sm flex items-center justify-center gap-2 transition-all">
                             <i data-lucide="plus" class="w-4 h-4"></i> Add New Category
                         </button>
                     </div>
@@ -351,6 +349,7 @@
     @include('components.admin.modals.certification-modal')
     @include('components.admin.modals.project-modal')
     @include('components.admin.modals.skill-category-modal')
+    @include('components.admin.modals.project-category-modal')
 
     <!-- MODAL: EDIT EXPERIENCE -->
     <div id="experienceModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
@@ -945,6 +944,67 @@
             }, 10);
 
             projectModalTitle.innerText = isEdit ? 'Edit Project' : 'Add New Project';
+
+            // Clear form for add mode
+            if (!isEdit) {
+                document.getElementById('projectTitle').value = '';
+                document.getElementById('projectCategory').value = '';
+                document.getElementById('projectDescription').value = '';
+                document.getElementById('projectTechnologies').value = '';
+                document.getElementById('projectGithubUrl').value = '';
+                document.getElementById('projectLiveUrl').value = '';
+                currentEditId = null;
+                currentEditType = null;
+            }
+
+            // Load categories for the dropdown
+            const selectedCategoryId = isEdit ? (currentEditType === 'project' ? currentEditId : null) : null;
+            // For edit, we need to get the category_id from the project data, but since we set it earlier, perhaps pass it differently
+            // Actually, since we set the value before, but options load async, better to pass the category_id
+            // Wait, in editProject, we have project.category_id
+            // So let's modify to pass the selectedId to openProjectModal
+
+            // For now, let's load and then set the value after a delay, or modify the function
+            loadProjectCategoriesForDropdown();
+            // For edit mode, set the category after a short delay to allow options to load
+            if (isEdit && currentEditType === 'project') {
+                setTimeout(() => {
+                    // The category should be set from the project data, but since we cleared it, we need to refetch or store it
+                    // Actually, in editProject, we set document.getElementById('projectCategory').value = project.category_id || '';
+                    // But since options are loaded async, it may not work
+                    // Better to modify editProject to call loadProjectCategoriesForDropdown with selectedId
+                }, 100);
+            }
+
+            // Attach save button event listener
+            const saveButton = projectModal.querySelector('button.bg-gold-400');
+            if (saveButton) {
+                // Remove any existing listeners
+                saveButton.onclick = null;
+                saveButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Save button clicked');
+                    // Disable button to prevent double clicks
+                    saveButton.disabled = true;
+                    saveButton.textContent = 'Saving...';
+                    const formData = new FormData();
+                    formData.append('title', document.getElementById('projectTitle').value);
+                    formData.append('category_id', document.getElementById('projectCategory').value);
+                    formData.append('content', document.getElementById('projectDescription').value);
+                    formData.append('technologies', document.getElementById('projectTechnologies').value);
+                    formData.append('github_url', document.getElementById('projectGithubUrl').value);
+                    formData.append('live_url', document.getElementById('projectLiveUrl').value);
+                    const isEditMode = currentEditType === 'project';
+                    console.log('isEditMode:', isEditMode, 'currentEditId:', currentEditId);
+                    saveProject(formData, isEditMode).finally(() => {
+                        // Re-enable button
+                        saveButton.disabled = false;
+                        saveButton.textContent = 'Save Changes';
+                        currentEditId = null;
+                        currentEditType = null;
+                    });
+                });
+            }
         }
 
         function closeProjectModal() {
@@ -953,6 +1013,38 @@
             projectModalContent.classList.add('scale-95');
             setTimeout(() => {
                 projectModal.classList.add('hidden');
+            }, 300);
+        }
+
+        // Project Category Modal Logic
+        const projectCategoryModal = document.getElementById('projectCategoryModal');
+        const projectCategoryModalContent = document.getElementById('projectCategoryModalContent');
+        const projectCategoryModalTitle = document.getElementById('projectCategoryModalTitle');
+        const projectCategoryForm = document.getElementById('projectCategoryForm');
+        const projectCategoryMethod = document.getElementById('projectCategoryMethod');
+
+        function openProjectCategoryModal(isEdit = false) {
+            projectCategoryModal.classList.remove('hidden');
+            setTimeout(() => {
+                projectCategoryModal.classList.remove('opacity-0');
+                projectCategoryModalContent.classList.remove('scale-95');
+                projectCategoryModalContent.classList.add('scale-100');
+            }, 10);
+
+            if (!isEdit) {
+                projectCategoryModalTitle.innerText = 'Add Project Category';
+                projectCategoryForm.reset();
+                projectCategoryMethod.value = 'POST';
+                window.currentEditProjectCategoryId = null;
+            }
+        }
+
+        function closeProjectCategoryModal() {
+            projectCategoryModal.classList.add('opacity-0');
+            projectCategoryModalContent.classList.remove('scale-100');
+            projectCategoryModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                projectCategoryModal.classList.add('hidden');
             }, 300);
         }
 
@@ -1136,7 +1228,114 @@
         async function saveProject(formData, isEdit = false) {
             try {
                 const url = isEdit ? `/admin/projects/${currentEditId}` : '/admin/projects';
-                const method = isEdit ? 'PATCH' : 'POST';
+                let method = isEdit ? 'POST' : 'POST'; // Always use POST for FormData with method spoofing
+
+                // Add _method field for PATCH requests
+                if (isEdit) {
+                    formData.append('_method', 'PATCH');
+                } else {
+                    formData.delete('_method'); // Ensure it's not present for POST
+                }
+
+                console.log('Sending request to:', url, 'method:', method);
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                console.log('Response status:', response.status);
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Success:', result);
+                    showNotification(`Project ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
+                    closeProjectModal();
+                    location.reload(); // Refresh to show new data
+                } else {
+                    const errorText = await response.text();
+                    console.log('Error response:', errorText);
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        showNotification(errorData.message || `Failed to ${isEdit ? 'update' : 'add'} project`, 'error');
+                    } catch (e) {
+                        showNotification(`Failed to ${isEdit ? 'update' : 'add'} project`, 'error');
+                    }
+                }
+            } catch (error) {
+                showNotification(`Error ${isEdit ? 'updating' : 'adding'} project`, 'error');
+            }
+        }
+
+        // Project Category Management Functions
+        async function loadProjectCategories() {
+            try {
+                const response = await fetch('/admin/project-categories');
+                const categories = await response.json();
+                const categoriesList = document.getElementById('project-categories-list');
+
+                // Clear existing categories except the add button
+                const addButton = categoriesList.querySelector('button');
+                categoriesList.innerHTML = '';
+
+                categories.forEach(category => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'flex items-center gap-3 bg-white/5 p-3 rounded-lg project-category-item';
+                    categoryDiv.setAttribute('data-id', category.id);
+                    categoryDiv.innerHTML = `
+                        <input type="text" class="bg-transparent border-none text-white flex-1 focus:outline-none project-category-name" value="${category.name}">
+                        <div class="w-6 h-6 rounded-full cursor-pointer category-color" style="background-color: ${category.color || '#3B82F6'}" title="Click to change color"></div>
+                        <button class="text-red-400 hover:text-red-300 delete-project-category" data-id="${category.id}" title="Delete Category"><i data-lucide="x" class="w-4 h-4"></i></button>
+                    `;
+                    categoriesList.appendChild(categoryDiv);
+                });
+
+                categoriesList.appendChild(addButton);
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Error loading project categories:', error);
+            }
+        }
+
+        async function loadProjectCategoriesForDropdown(selectedId = null) {
+            try {
+                const response = await fetch('/admin/project-categories');
+                const categories = await response.json();
+                const dropdown = document.getElementById('projectCategory');
+
+                // Clear existing options except the first one
+                dropdown.innerHTML = '<option value="">Select Category</option>';
+
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.id;
+                    option.textContent = category.name;
+                    if (selectedId && category.id == selectedId) {
+                        option.selected = true;
+                    }
+                    dropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading categories for dropdown:', error);
+            }
+        }
+
+        async function saveProjectCategory(event) {
+            event.preventDefault();
+
+            const formData = new FormData(projectCategoryForm);
+            const isEdit = window.currentEditProjectCategoryId !== null;
+
+            try {
+                const url = isEdit ? `/admin/project-categories/${window.currentEditProjectCategoryId}` : '/admin/project-categories';
+                const method = isEdit ? 'POST' : 'POST'; // Always POST for FormData with method spoofing
+
+                // Add _method field for PATCH requests
+                if (isEdit) {
+                    formData.append('_method', 'PATCH');
+                }
 
                 const response = await fetch(url, {
                     method: method,
@@ -1148,14 +1347,63 @@
                 });
 
                 if (response.ok) {
-                    showNotification(`Project ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
-                    closeProjectModal();
-                    location.reload(); // Refresh to show new data
+                    showNotification(`Category ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
+                    closeProjectCategoryModal();
+                    loadProjectCategories(); // Reload categories
+                    loadProjectCategoriesForDropdown(); // Update dropdown in project modal
                 } else {
-                    showNotification(`Failed to ${isEdit ? 'update' : 'add'} project`, 'error');
+                    const errorData = await response.json();
+                    showNotification(errorData.message || `Failed to ${isEdit ? 'update' : 'add'} category`, 'error');
                 }
             } catch (error) {
-                showNotification(`Error ${isEdit ? 'updating' : 'adding'} project`, 'error');
+                showNotification(`Error ${isEdit ? 'updating' : 'adding'} category`, 'error');
+            }
+        }
+
+        async function deleteProjectCategory(id) {
+            if (!confirm('Are you sure you want to delete this category? This may affect existing projects.')) return;
+
+            try {
+                const response = await fetch(`/admin/project-categories/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    showNotification('Category deleted successfully!', 'success');
+                    loadProjectCategories(); // Reload categories
+                    loadProjectCategoriesForDropdown(); // Update dropdown in project modal
+                } else {
+                    showNotification('Failed to delete category', 'error');
+                }
+            } catch (error) {
+                showNotification('Error deleting category', 'error');
+            }
+        }
+
+        async function updateProjectCategoryName(id, name) {
+            try {
+                const response = await fetch(`/admin/project-categories/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ name: name })
+                });
+
+                if (response.ok) {
+                    showNotification('Category name updated successfully!', 'success');
+                    loadProjectCategoriesForDropdown(); // Update dropdown in project modal
+                } else {
+                    showNotification('Failed to update category name', 'error');
+                }
+            } catch (error) {
+                showNotification('Error updating category name', 'error');
             }
         }
 
@@ -1280,14 +1528,16 @@
                     currentEditType = 'project';
 
                     // Populate modal with existing data
-                    document.querySelector('#projectModal input[placeholder*="Smart"]').value = project.title || '';
-                    document.querySelector('#projectModal select').value = project.category || 'web';
-                    document.querySelector('#projectModal textarea').value = project.description || '';
-                    document.querySelector('#projectModal input[placeholder*="Python"]').value = project.technologies || '';
-                    document.querySelector('#projectModal input[type="url"]:first-of-type').value = project.github_url || '';
-                    document.querySelector('#projectModal input[type="url"]:last-of-type').value = project.live_url || '';
+                    document.getElementById('projectTitle').value = project.title || '';
+                    document.getElementById('projectDescription').value = project.content || '';
+                    document.getElementById('projectTechnologies').value = project.technologies || '';
+                    document.getElementById('projectGithubUrl').value = project.github_url || '';
+                    document.getElementById('projectLiveUrl').value = project.live_url || '';
 
                     openProjectModal(true);
+
+                    // Load categories with selected category
+                    await loadProjectCategoriesForDropdown(project.category_id);
                 }
             } catch (error) {
                 showNotification('Error loading project data', 'error');
@@ -1761,10 +2011,63 @@
             openSkillCategoryModal();
         }
 
-        // Form submission handlers
+        // Form submission handlers & event delegation
         document.addEventListener('DOMContentLoaded', function() {
             console.log('=== DOM Content Loaded - Attaching event listeners ===');
 
+                    async function editProjectCategory(id) {
+                        try {
+                            const response = await fetch(`/admin/project-categories/${id}`);
+                            const category = await response.json();
+            
+                            // Store current edit ID for update
+                            window.currentEditProjectCategoryId = id;
+            
+                            // Open modal first (without resetting for edit)
+                            openProjectCategoryModal(true); // Pass true to indicate edit mode
+                            projectCategoryModalTitle.innerText = 'Edit Project Category';
+            
+                            // Populate modal with existing data after modal is open
+                            projectCategoryForm.querySelector('[name="name"]').value = category.name;
+                            projectCategoryForm.querySelector('[name="description"]').value = category.description;
+                            projectCategoryForm.querySelector('[name="color"]').value = category.color;
+                        } catch (error) {
+                            showNotification('Error loading category data', 'error');
+                        }
+                    }
+            
+                    // Delegated event listeners for dynamic content
+                    document.body.addEventListener('click', function(e) {
+                        const editButton = e.target.closest('[data-edit-type]');
+                        const deleteButton = e.target.closest('[data-delete-type]');
+                        const editProjectCategoryButton = e.target.closest('.edit-project-category');
+                        const deleteProjectCategoryButton = e.target.closest('.delete-project-category');
+            
+                        if (editButton) {
+                            const type = editButton.getAttribute('data-edit-type');
+                            const id = editButton.getAttribute('data-id');
+                            if (type === 'project') editProject(id);
+                            if (type === 'certification') editCertification(id);
+                            if (type === 'education') editEducation(id);
+                            if (type === 'experience') editExperience(id);
+                        }
+            
+                        if (deleteButton) {
+                            const type = deleteButton.getAttribute('data-delete-type');
+                            const id = deleteButton.getAttribute('data-id');
+                            deleteItem(type, id);
+                        }
+            
+                        if (editProjectCategoryButton) {
+                            const id = editProjectCategoryButton.getAttribute('data-id');
+                            editProjectCategory(id);
+                        }
+            
+                        if (deleteProjectCategoryButton) {
+                            const id = deleteProjectCategoryButton.getAttribute('data-id');
+                            deleteProjectCategory(id);
+                        }
+                    });
             // Check for hash in URL on page load
             const hash = window.location.hash.substring(1); // Remove the '#'
             if (hash && ['hero', 'metrics', 'experience', 'education', 'certifications', 'projects', 'categories', 'contact', 'skills', 'skill-categories', 'messages'].includes(hash)) {
@@ -1812,21 +2115,11 @@
             if (skillForm) {
                 skillForm.addEventListener('submit', saveSkill);
             }
-            // Project modal save
-            document.querySelector('#projectModal button:last-child').addEventListener('click', function(e) {
-                e.preventDefault();
-                const formData = new FormData();
-                formData.append('title', document.querySelector('#projectModal input[placeholder*="Smart"]').value);
-                formData.append('category', document.querySelector('#projectModal select').value);
-                formData.append('description', document.querySelector('#projectModal textarea').value);
-                formData.append('technologies', document.querySelector('#projectModal input[placeholder*="Python"]').value);
-                formData.append('github_url', document.querySelector('#projectModal input[type="url"]:first-of-type').value);
-                formData.append('live_url', document.querySelector('#projectModal input[type="url"]:last-of-type').value);
-                const isEdit = currentEditType === 'project';
-                saveProject(formData, isEdit);
-                currentEditId = null;
-                currentEditType = null;
-            });
+
+            // Project category modal save
+            if (projectCategoryForm) {
+                projectCategoryForm.addEventListener('submit', saveProjectCategory);
+            }
 
             // Edit button handlers
             document.addEventListener('click', function(e) {
@@ -1866,6 +2159,13 @@
                     deleteSkill(id);
                 }
 
+                // Project category management
+                if (e.target.closest('.delete-project-category')) {
+                    e.preventDefault();
+                    const id = e.target.closest('.delete-project-category').getAttribute('data-id');
+                    deleteProjectCategory(id);
+                }
+
                 // Category management
                 if (e.target.closest('.edit-category')) {
                     e.preventDefault();
@@ -1886,11 +2186,26 @@
                         saveCategory(id, newName);
                     }
                 }
+
+                // Project category name editing
+                if (e.target.classList.contains('project-category-name')) {
+                    const categoryItem = e.target.closest('.project-category-item');
+                    const id = categoryItem.getAttribute('data-id');
+                    const newName = e.target.value.trim();
+                    if (newName) {
+                        updateProjectCategoryName(id, newName);
+                    }
+                }
             });
 
             // Enter key for category editing
             document.addEventListener('keypress', function(e) {
                 if (e.target.classList.contains('category-name') && e.key === 'Enter') {
+                    e.target.blur();
+                }
+
+                // Enter key for project category editing
+                if (e.target.classList.contains('project-category-name') && e.key === 'Enter') {
                     e.target.blur();
                 }
             });
