@@ -32,9 +32,10 @@ class SkillCategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:skill_categories',
+            'icon' => 'required|string|max:255',
         ]);
 
-        $category = SkillCategory::create($request->only(['name']));
+        $category = SkillCategory::create($request->only(['name', 'icon']));
 
         return response()->json($category, 201);
     }
@@ -63,10 +64,11 @@ class SkillCategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255|unique:skill_categories,name,' . $id,
+            'icon' => 'required|string|max:255',
         ]);
 
         $category = SkillCategory::findOrFail($id);
-        $category->update($request->only(['name']));
+        $category->update($request->only(['name', 'icon']));
 
         return response()->json($category);
     }

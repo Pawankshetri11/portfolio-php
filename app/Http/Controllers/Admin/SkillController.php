@@ -40,10 +40,20 @@ class SkillController extends Controller
             'name' => 'required|string|max:255',
             'level' => 'required|in:beginner,intermediate,advanced',
             'category_id' => 'nullable|exists:skill_categories,id',
-            'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
+            'logo' => 'nullable|file|mimes:png,jpg,jpeg,svg|max:2048',
         ]);
 
         $data = $request->all();
+
+        // Map string level values to integers
+        if (isset($data['level'])) {
+            $levelMap = [
+                'beginner' => 1,
+                'intermediate' => 2,
+                'advanced' => 3
+            ];
+            $data['level'] = $levelMap[$data['level']] ?? 1;
+        }
 
         if ($request->hasFile('logo')) {
             $data['logo'] = $request->file('logo')->store('logos', 'public');
@@ -85,11 +95,21 @@ class SkillController extends Controller
             'name' => 'required|string|max:255',
             'level' => 'required|in:beginner,intermediate,advanced',
             'category_id' => 'nullable|exists:skill_categories,id',
-            'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
+            'logo' => 'nullable|file|mimes:png,jpg,jpeg,svg|max:2048',
         ]);
 
         $skill = Skill::findOrFail($id);
         $data = $request->all();
+
+        // Map string level values to integers
+        if (isset($data['level'])) {
+            $levelMap = [
+                'beginner' => 1,
+                'intermediate' => 2,
+                'advanced' => 3
+            ];
+            $data['level'] = $levelMap[$data['level']] ?? 1;
+        }
 
         if ($request->hasFile('logo')) {
             // Delete old logo if exists

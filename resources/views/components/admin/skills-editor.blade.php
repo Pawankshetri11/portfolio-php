@@ -36,10 +36,11 @@
             <div>
                 <label class="admin-label">Skill Icon/Image</label>
                 <label class="file-upload-box block">
-                    <input type="file" name="logo" class="hidden">
+                    <input type="file" name="logo" accept="image/*,.svg" class="hidden" onchange="updateFileName(this)">
                     <div class="flex flex-col items-center justify-center gap-2 text-zinc-400">
                         <i data-lucide="upload-cloud" class="w-8 h-8 text-gold-400"></i>
-                        <span class="text-sm">Click to upload SVG/PNG</span>
+                        <span class="text-sm file-upload-text">Click to upload SVG/PNG</span>
+                        <span class="text-xs text-gold-400 file-name hidden"></span>
                     </div>
                 </label>
             </div>

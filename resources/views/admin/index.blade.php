@@ -1534,7 +1534,7 @@
         const skillCategoryForm = document.getElementById('skillCategoryForm');
         const skillCategoryNameInput = document.getElementById('skillCategoryNameInput');
 
-        function openSkillCategoryModal() {
+        function openSkillCategoryModal(isEdit = false) {
             skillCategoryModal.classList.remove('hidden');
             setTimeout(() => {
                 skillCategoryModal.classList.remove('opacity-0');
@@ -1542,12 +1542,14 @@
                 skillCategoryModalContent.classList.add('scale-100');
             }, 10);
 
-            skillCategoryModalTitle.innerText = 'Add Skill Category';
-            skillCategoryForm.reset();
-            // Reset icon selection
-            document.querySelectorAll('#categoryIconPicker .icon-option').forEach(el => el.classList.remove('selected'));
-            document.querySelector('#categoryIconPicker .icon-option[data-icon="layers"]').classList.add('selected');
-            document.getElementById('selectedCategoryIcon').value = 'layers';
+            if (!isEdit) {
+                skillCategoryModalTitle.innerText = 'Add Skill Category';
+                skillCategoryForm.reset();
+                // Reset icon selection
+                document.querySelectorAll('#categoryIconPicker .icon-option').forEach(el => el.classList.remove('selected'));
+                document.querySelector('#categoryIconPicker .icon-option[data-icon="layers"]').classList.add('selected');
+                document.getElementById('selectedCategoryIcon').value = 'layers';
+            }
         }
 
         function closeSkillCategoryModal() {
@@ -1650,6 +1652,30 @@
 
         function resetSkillForm() {
             document.getElementById('skillForm').reset();
+            // Reset file name display
+            const fileNameSpan = document.querySelector('.file-name');
+            const uploadText = document.querySelector('.file-upload-text');
+            if (fileNameSpan) fileNameSpan.classList.add('hidden');
+            if (uploadText) uploadText.textContent = 'Click to upload SVG/PNG';
+        }
+
+        function updateFileName(input) {
+            const fileNameSpan = input.closest('.file-upload-box').querySelector('.file-name');
+            const uploadText = input.closest('.file-upload-box').querySelector('.file-upload-text');
+
+            if (input.files && input.files[0]) {
+                const fileName = input.files[0].name;
+                if (fileNameSpan) {
+                    fileNameSpan.textContent = fileName;
+                    fileNameSpan.classList.remove('hidden');
+                }
+                if (uploadText) {
+                    uploadText.textContent = 'File selected:';
+                }
+            } else {
+                if (fileNameSpan) fileNameSpan.classList.add('hidden');
+                if (uploadText) uploadText.textContent = 'Click to upload SVG/PNG';
+            }
         }
 
         async function saveSkill(event) {
@@ -1708,7 +1734,14 @@
                 const response = await fetch(`/admin/skill-categories/${id}`);
                 const category = await response.json();
 
-                // Populate modal with existing data
+                // Store current edit ID for update
+                window.currentEditCategoryId = id;
+
+                // Open modal first (without resetting for edit)
+                openSkillCategoryModal(true); // Pass true to indicate edit mode
+                document.getElementById('skillCategoryModalTitle').innerText = 'Edit Skill Category';
+
+                // Populate modal with existing data after modal is open
                 document.getElementById('skillCategoryNameInput').value = category.name;
 
                 // Set selected icon
@@ -1718,12 +1751,6 @@
                     selectedIcon.classList.add('selected');
                     document.getElementById('selectedCategoryIcon').value = category.icon || 'layers';
                 }
-
-                // Store current edit ID for update
-                window.currentEditCategoryId = id;
-
-                openSkillCategoryModal();
-                document.getElementById('skillCategoryModalTitle').innerText = 'Edit Skill Category';
             } catch (error) {
                 showNotification('Error loading category data', 'error');
             }
