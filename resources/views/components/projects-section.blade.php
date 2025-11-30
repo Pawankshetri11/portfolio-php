@@ -8,7 +8,7 @@
 
         <div class="flex flex-wrap justify-center gap-4 mb-8 md:mb-12" data-aos="fade-up" data-aos-delay="100">
             <button onclick="filterProjects('all')" data-slug="all" class="filter-btn active px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">All</button>
-            @foreach(\App\Models\ProjectCategory::orderBy('name')->get() as $category)
+            @foreach($projectCategories as $category)
             <button onclick="filterProjects('{{ $category->slug }}')" data-slug="{{ $category->slug }}" class="filter-btn px-6 py-2 rounded-full text-sm font-medium border text-zinc-300">{{ $category->name }}</button>
             @endforeach
         </div>

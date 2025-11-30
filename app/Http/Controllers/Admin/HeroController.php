@@ -35,12 +35,17 @@ class HeroController extends Controller
             'subtitle' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
+            'resume' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
         ]);
 
         $data = $request->all();
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('heroes', 'public');
+        }
+
+        if ($request->hasFile('resume')) {
+            $data['resume'] = $request->file('resume')->store('resumes', 'public');
         }
 
         Hero::create($data);
@@ -82,10 +87,11 @@ class HeroController extends Controller
             'greeting' => 'nullable|string|max:255',
             'first_name' => 'nullable|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'title' => 'required|string|max:255',
+            'title' => 'nullable|string|max:255',
             'subtitle' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048',
+            'resume' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
             'github_url' => 'nullable|url',
             'linkedin_url' => 'nullable|url',
             'email' => 'nullable|email',
@@ -96,9 +102,13 @@ class HeroController extends Controller
         ]);
 
         $hero = Hero::findOrFail($id);
-        $data = $request->all();
+        $data = $request->except(['image', 'resume']); // Exclude files from all()
 
         \Log::info('Hero update data', ['data' => $data]);
+        \Log::info('Resume file check', [
+            'has_resume' => $request->hasFile('resume'),
+            'all_files' => $request->allFiles()
+        ]);
 
         if ($request->hasFile('image')) {
             // Delete old image if exists
@@ -106,6 +116,19 @@ class HeroController extends Controller
                 \Storage::disk('public')->delete($hero->image);
             }
             $data['image'] = $request->file('image')->store('heroes', 'public');
+        }
+
+        if ($request->hasFile('resume')) {
+            \Log::info('Processing resume file', ['file' => $request->file('resume')]);
+            // Delete old resume if exists
+            if ($hero->resume && \Storage::disk('public')->exists($hero->resume)) {
+                \Storage::disk('public')->delete($hero->resume);
+            }
+            $resumePath = $request->file('resume')->store('resumes', 'public');
+            $data['resume'] = $resumePath;
+            \Log::info('Resume stored at', ['path' => $resumePath]);
+        } else {
+            \Log::info('No resume file found in request');
         }
 
         $hero->update($data);

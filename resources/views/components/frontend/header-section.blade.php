@@ -33,10 +33,10 @@
             @endauth
         </nav>
 
-        <!-- Right Side: Actions -->
+        <!-- Actions -->
         <div class="hidden lg:flex items-center gap-4 animate-fade-in-down" style="animation-delay: 200ms;">
             <!-- Resume Button (Outline Style + Icon) -->
-            <a href="#" target="_blank" class="btn-outline-gold px-6 py-2 rounded-lg text-sm tracking-wide">
+            <a href="{{ \App\Models\Hero::first()?->resume ? '/storage/' . \App\Models\Hero::first()->resume : '#' }}" download class="btn-outline-gold px-6 py-2 rounded-lg text-sm tracking-wide">
                 Resume <i data-lucide="download" class="w-4 h-4"></i>
             </a>
         </div>
@@ -75,7 +75,7 @@
 
             <!-- Mobile Resume -->
             <div class="mt-auto space-y-4">
-                <a href="#" class="w-full btn-gold px-5 py-3 rounded-lg text-center block flex items-center justify-center gap-2">
+                <a href="{{ \App\Models\Hero::first()?->resume ? '/storage/' . \App\Models\Hero::first()->resume : '#' }}" download class="w-full btn-gold px-5 py-3 rounded-lg text-center block flex items-center justify-center gap-2">
                     Resume <i data-lucide="download" class="w-4 h-4"></i>
                 </a>
             </div>

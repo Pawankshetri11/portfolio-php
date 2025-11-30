@@ -187,6 +187,7 @@
 </head>
 <body class="antialiased selection:bg-[#ffd700] selection:text-black relative">
 
+    
     <!-- BACKGROUND ANIMATION LAYER -->
     <div class="fixed inset-0 z-0 pointer-events-none">
         <!-- 1. Gradient Orbs -->
@@ -206,7 +207,7 @@
 
     @include('components.frontend.key-metrics-section')
 
-    @include('components.frontend.skills-section')
+    @include('components.frontend.skills-section', ['skillCategories' => $skillCategories])
 
     @include('components.frontend.experience-section', ['experiences' => $experiences])
 
@@ -214,11 +215,12 @@
 
     @include('components.frontend.certifications-section', ['certificates' => $certificates])
 
-    <x-projects-section :projects="$projects" />
+    <x-projects-section :projects="$projects" :project-categories="$projectCategories" />
 
     @include('components.frontend.contact-section', ['contact' => $contact])
 
     @include('components.frontend.footer-section')
+    
 
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

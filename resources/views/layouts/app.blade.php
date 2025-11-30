@@ -11,8 +11,29 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <!-- Tailwind CSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+
+        <!-- Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            window.axios = axios;
+            window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+        </script>
+
+        <!-- Alpine.js -->
+        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+        <!-- Custom JS -->
+        <script src="{{ asset('js/portfolio.js') }}"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.Alpine) {
+                    Alpine.start();
+                }
+            });
+        </script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">

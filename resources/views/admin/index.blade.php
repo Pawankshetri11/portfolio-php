@@ -1061,7 +1061,12 @@
                 return;
             }
 
-            console.log('Hero section found');
+            // Get hero id
+            const heroId = heroSection.getAttribute('data-hero-id') || 1;
+            console.log('Hero section found, heroId:', heroId);
+
+            // Create FormData for file uploads
+            const formData = new FormData();
 
             // Get inputs by data attributes
             const greetingInput = heroSection.querySelector('input[data-field="greeting"]');
@@ -1073,6 +1078,7 @@
             const linkedinInput = heroSection.querySelector('input[data-field="linkedin_url"]');
             const emailInput = heroSection.querySelector('input[data-field="email"]');
             const textarea = heroSection.querySelector('textarea[data-field="description"]');
+            const resumeInput = heroSection.querySelector('input[data-field="resume"]');
 
             console.log('Found inputs:', {
                 greeting: greetingInput?.value,
@@ -1083,22 +1089,20 @@
                 github: githubInput?.value,
                 linkedin: linkedinInput?.value,
                 email: emailInput?.value,
-                description: textarea?.value
+                description: textarea?.value,
+                resume: resumeInput?.files?.[0]?.name
             });
 
-            // Create data object
-            const data = {};
-
             // Add form data
-            if (greetingInput) data.greeting = greetingInput.value.trim();
-            if (firstNameInput) data.first_name = firstNameInput.value.trim();
-            if (lastNameInput) data.last_name = lastNameInput.value.trim();
-            if (titleInput) data.title = titleInput.value.trim();
-            if (subtitleInput) data.subtitle = subtitleInput.value.trim();
-            if (githubInput) data.github_url = githubInput.value.trim();
-            if (linkedinInput) data.linkedin_url = linkedinInput.value.trim();
-            if (emailInput) data.email = emailInput.value.trim();
-            if (textarea) data.description = textarea.value.trim();
+            if (greetingInput) formData.append('greeting', greetingInput.value.trim());
+            if (firstNameInput) formData.append('first_name', firstNameInput.value.trim());
+            if (lastNameInput) formData.append('last_name', lastNameInput.value.trim());
+            if (titleInput) formData.append('title', titleInput.value.trim());
+            if (subtitleInput) formData.append('subtitle', subtitleInput.value.trim());
+            if (githubInput) formData.append('github_url', githubInput.value.trim());
+            if (linkedinInput) formData.append('linkedin_url', linkedinInput.value.trim());
+            if (emailInput) formData.append('email', emailInput.value.trim());
+            if (textarea) formData.append('description', textarea.value.trim());
 
             // Add animation labels
             const anim1 = document.getElementById('animation_label_1');
@@ -1106,25 +1110,38 @@
             const anim3 = document.getElementById('animation_label_3');
             const anim4 = document.getElementById('animation_label_4');
 
-            if (anim1) data.animation_label_1 = anim1.value.trim();
-            if (anim2) data.animation_label_2 = anim2.value.trim();
-            if (anim3) data.animation_label_3 = anim3.value.trim();
-            if (anim4) data.animation_label_4 = anim4.value.trim();
+            if (anim1) formData.append('animation_label_1', anim1.value.trim());
+            if (anim2) formData.append('animation_label_2', anim2.value.trim());
+            if (anim3) formData.append('animation_label_3', anim3.value.trim());
+            if (anim4) formData.append('animation_label_4', anim4.value.trim());
 
-            // Log data for debugging
-            console.log('Sending data:', data);
+            // Add resume file if selected
+            if (resumeInput && resumeInput.files && resumeInput.files[0]) {
+                console.log('Adding resume file to FormData:', resumeInput.files[0].name, resumeInput.files[0].size);
+                formData.append('resume', resumeInput.files[0]);
+            } else {
+                console.log('No resume file found in resumeInput:', resumeInput);
+            }
 
-            console.log('Sending request to /admin/heros/1');
+            // Log FormData contents for debugging
+            console.log('FormData contents:');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, value);
+            }
+
+            console.log('Sending request to /admin/heros/' + heroId);
 
             try {
-                const response = await fetch('/admin/heros/1', {
-                    method: 'PATCH',
+                // Add this line to spoof the method
+                formData.append('_method', 'PATCH');
+
+                const response = await fetch('/admin/heros/' + heroId, {
+                    method: 'POST', // Use POST for file uploads
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify(data)
+                    body: formData
                 });
 
                 console.log('Response status:', response.status);

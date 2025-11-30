@@ -10,11 +10,13 @@ use App\Models\Experience;
 use App\Models\Hero;
 use App\Models\KeyMetric;
 use App\Models\Project;
-use App\Models\Skill;
+use App\Models\ProjectCategory;
+use App\Models\SkillCategory;
 use App\Models\TechStack;
 use Illuminate\Http\Request;
 use App\Models\ContactMessage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -25,7 +27,8 @@ class HomeController extends Controller
         $keyMetrics = KeyMetric::orderBy('order')->get();
         $educations = Education::all();
         $projects = Project::whereNotNull('published_at')->orderBy('published_at', 'desc')->take(6)->get();
-        $skills = Skill::all();
+        $projectCategories = ProjectCategory::orderBy('name')->get();
+        $skillCategories = SkillCategory::whereHas('skills')->with('skills')->get();
         $techStacks = TechStack::all();
         $experiences = Experience::orderBy('created_at', 'desc')->get();
         $contact = Contact::first();
@@ -37,12 +40,25 @@ class HomeController extends Controller
             'keyMetrics',
             'educations',
             'projects',
-            'skills',
+            'projectCategories',
+            'skillCategories',
             'techStacks',
             'experiences',
             'contact',
             'certificates'
         ));
+    }
+
+    public function downloadResume()
+    {
+        $hero = Hero::first();
+        $resumePath = $hero?->resume;
+
+        if ($resumePath && Storage::disk('public')->exists($resumePath)) {
+            return Storage::disk('public')->download($resumePath);
+        }
+
+        abort(404, 'Resume not found.');
     }
 
     public function projects(Request $request)

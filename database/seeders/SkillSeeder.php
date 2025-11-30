@@ -29,6 +29,9 @@ class SkillSeeder extends Seeder
         ];
 
         foreach ($skills as $skill) {
+            $category = \App\Models\SkillCategory::where('name', $skill['category'])->first();
+            unset($skill['category']);
+            $skill['category_id'] = $category->id;
             Skill::create($skill);
         }
     }

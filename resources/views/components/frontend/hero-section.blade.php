@@ -1,7 +1,3 @@
-@php
-    $hero = \App\Models\Hero::first();
-@endphp
-
 <!-- 1. HERO SECTION -->
 <section id="hero" class="relative z-10 min-h-[60vh] md:min-h-screen flex items-center justify-center pt-28 pb-8 md:pt-32 md:pb-12 px-6">
     <div class="max-w-[95%] w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

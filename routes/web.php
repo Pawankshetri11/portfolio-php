@@ -15,11 +15,14 @@ use App\Http\Controllers\Admin\ProjectCategoryController;
 use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/test', function () { return 'Hello World'; });
+
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index']);
 Route::get('/projects', [App\Http\Controllers\HomeController::class, 'projects'])->name('frontend.projects.index');
 Route::get('/projects/{project}', [App\Http\Controllers\HomeController::class, 'showProject'])->name('project.show');
 
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+Route.get('/resume/download', [App\Http\Controllers\HomeController::class, 'downloadResume'])->name('resume.download');
 
 Route::get('/admin', function () {
     $contact = App\Models\Contact::first();

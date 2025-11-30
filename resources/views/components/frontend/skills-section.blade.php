@@ -1,8 +1,3 @@
-@php
-    // Get all categories that have skills
-    $categoriesWithSkills = \App\Models\SkillCategory::whereHas('skills')->with('skills')->get();
-@endphp
-
 <!-- 4. TECHNICAL SKILLS -->
 <section id="skills" class="relative z-10 py-12 md:py-24 px-6">
     <div class="max-w-[95%] mx-auto">
@@ -12,7 +7,7 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-            @forelse($categoriesWithSkills as $index => $category)
+            @forelse($skillCategories as $index => $category)
             <div data-aos="fade-up" data-aos-delay="{{ $index * 100 }}" class="glass-panel p-4 md:p-6">
                 <div class="flex items-center gap-3 mb-3 md:mb-4">
                     <i data-lucide="{{ $category->icon ?? 'layers' }}" class="w-5 h-5 md:w-6 md:h-6 text-[#ffd700]"></i>

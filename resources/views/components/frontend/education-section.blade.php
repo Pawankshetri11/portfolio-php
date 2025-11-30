@@ -8,11 +8,14 @@
             <p class="text-zinc-400 max-w-2xl mx-auto">The academic foundation that drives my technical expertise.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        @php
+            $cardWidthClass = $educations->count() >= 3 ? 'lg:w-1/3' : 'lg:w-[40%]';
+        @endphp
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-wrap lg:justify-center gap-6 md:gap-8">
 
             @forelse($educations->sortByDesc('start_date') as $index => $education)
             <!-- Edu Card -->
-            <div class="glass-panel p-6 md:p-8 relative overflow-hidden group" data-aos="fade-right" data-aos-delay="{{ $index * 100 }}">
+            <div class="glass-panel p-6 md:p-8 relative overflow-hidden group {{ $cardWidthClass }}" data-aos="fade-right" data-aos-delay="{{ $index * 100 }}">
                 <!-- Background Decoration -->
                 <div class="absolute top-0 right-0 w-32 h-32 bg-[#ffd700]/5 rounded-bl-[100px] -mr-8 -mt-8 transition-all duration-500 group-hover:bg-[#ffd700]/10"></div>
 

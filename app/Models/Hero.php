@@ -15,6 +15,7 @@ class Hero extends Model
         'subtitle',
         'description',
         'image',
+        'resume',
         'github_url',
         'linkedin_url',
         'email',

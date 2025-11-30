@@ -41,7 +41,7 @@ class ProjectCategorySeeder extends Seeder
         ];
 
         foreach ($categories as $category) {
-            ProjectCategory::create($category);
+            ProjectCategory::firstOrCreate(['slug' => $category['slug']], $category);
         }
     }
 }

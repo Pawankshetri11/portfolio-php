@@ -1,5 +1,5 @@
 <!-- 1. HERO SECTION EDITOR -->
-<div id="hero-section" class="space-y-8 max-w-4xl mx-auto animate-fade-in">
+<div id="hero-section" class="space-y-8 max-w-4xl mx-auto animate-fade-in" data-hero-id="{{ \App\Models\Hero::first()?->id ?? 1 }}">
     <!-- Typography -->
     <div class="admin-card">
         <h3 class="text-lg font-bold text-white mb-6 border-b border-white/5 pb-4">Main Typography</h3>
@@ -27,6 +27,13 @@
             <div class="col-span-2">
                 <label class="admin-label">Description</label>
                 <textarea class="admin-input h-24 resize-none" data-field="description">{{ \App\Models\Hero::first()?->description ?? 'Turning complex datasets into actionable insights, and building robust, scalable web applications from the ground up.' }}</textarea>
+            </div>
+            <div class="col-span-2">
+                <label class="admin-label">Resume File</label>
+                <input type="file" class="admin-input" data-field="resume" accept=".pdf,.doc,.docx">
+                @if(\App\Models\Hero::first()?->resume)
+                    <p class="text-sm text-gray-400 mt-2">Current file: {{ basename(\App\Models\Hero::first()->resume) }}</p>
+                @endif
             </div>
         </div>
     </div>
